@@ -24,5 +24,16 @@ Resources move from AzureRM to AzAPI with `moved` blocks, so the plan after upgr
   }
   ```
 
+- **Private DNS zone groups managed by the module** (`private_endpoints_manage_dns_zone_group` is true, the default, and a private endpoint sets `private_dns_zone_resource_ids`). The AzureRM provider kept the zone group inside the private endpoint, so there is no separate address for a `moved` block to start from, and AzAPI does not take over an existing resource it did not create. Import each zone group once with an `import` block in your root module:
+
+  ```hcl
+  import {
+    to = module.<module-name>.azapi_resource.private_dns_zone_groups["<key>"]
+    id = "/subscriptions/<subscription-id>/resourceGroups/<resource-group-name>/providers/Microsoft.Network/privateEndpoints/<private-endpoint-name>/privateDnsZoneGroups/<zone-group-name>?api-version=2024-05-01"
+  }
+  ```
+
+  `<key>` is the key of the `private_endpoints` entry, `<private-endpoint-name>` is its `name` (`pep-<server name>` by default), and `<zone-group-name>` is its `private_dns_zone_group_name` (`default` by default). The import leaves the zone group and its DNS records unchanged. Without it, the apply stops with `Resource already exists`, and nothing in Azure is removed; add the block and apply again. Remove the block once the upgrade is applied.
+
 > [!WARNING]
 > Major version Zero (0.y.z) is for initial development. Anything MAY change at any time. A module SHOULD NOT be considered stable till at least it is major version one (1.0.0) or greater. Changes will always be via new versions being published and no changes will be made to existing published versions. For more details please go to <https://semver.org/>
