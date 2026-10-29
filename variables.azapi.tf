@@ -1,8 +1,10 @@
 variable "ignore_body_changes" {
   type = object({
-    authorization_locks            = optional(list(string), [])
-    authorization_role_assignments = optional(list(string), [])
-    insights_diagnostic_settings   = optional(list(string), [])
+    authorization_locks                               = optional(list(string), [])
+    authorization_role_assignments                    = optional(list(string), [])
+    insights_diagnostic_settings                      = optional(list(string), [])
+    network_private_endpoints                         = optional(list(string), [])
+    network_private_endpoints_private_dns_zone_groups = optional(list(string), [])
   })
   default     = {}
   description = <<DESCRIPTION
@@ -11,15 +13,19 @@ Body-relative dot-notation paths whose changes the AzAPI provider ignores. Ignor
 - `authorization_locks` - Ignored body paths for management locks.
 - `authorization_role_assignments` - Ignored body paths for role assignments.
 - `insights_diagnostic_settings` - Ignored body paths for diagnostic settings.
+- `network_private_endpoints` - Ignored body paths for private endpoints.
+- `network_private_endpoints_private_dns_zone_groups` - Ignored body paths for private endpoint DNS zone groups.
 DESCRIPTION
   nullable    = false
 }
 
 variable "resource_types" {
   type = object({
-    authorization_locks            = optional(string, "Microsoft.Authorization/locks@2020-05-01")
-    authorization_role_assignments = optional(string, "Microsoft.Authorization/roleAssignments@2022-04-01")
-    insights_diagnostic_settings   = optional(string, "Microsoft.Insights/diagnosticSettings@2021-05-01-preview")
+    authorization_locks                               = optional(string, "Microsoft.Authorization/locks@2020-05-01")
+    authorization_role_assignments                    = optional(string, "Microsoft.Authorization/roleAssignments@2022-04-01")
+    insights_diagnostic_settings                      = optional(string, "Microsoft.Insights/diagnosticSettings@2021-05-01-preview")
+    network_private_endpoints                         = optional(string, "Microsoft.Network/privateEndpoints@2024-05-01")
+    network_private_endpoints_private_dns_zone_groups = optional(string, "Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2024-05-01")
   })
   default     = {}
   description = <<DESCRIPTION
@@ -28,6 +34,8 @@ AzAPI resource types and API versions used by the module.
 - `authorization_locks` - Management locks.
 - `authorization_role_assignments` - Role assignments.
 - `insights_diagnostic_settings` - Diagnostic settings.
+- `network_private_endpoints` - Private endpoints.
+- `network_private_endpoints_private_dns_zone_groups` - Private endpoint DNS zone groups.
 DESCRIPTION
   nullable    = false
 }
